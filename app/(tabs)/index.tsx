@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -10,78 +11,80 @@ import { Colors } from '@/constants/Colors';
 
 export default function HomeScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#8EC5FF', dark: '#123A6F' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/relaxhome.jpg')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Today</ThemedText>
-        <HelloWave />
-      </ThemedView>
-
-      <ThemedText type="subtitle" style={styles.subtitle}>
-        Health Overview
-      </ThemedText>
-
-      <View style={styles.cardRow}>
-        <ThemedView style={[styles.card, styles.heartCard]}>
-          <View style={styles.iconBadge}>
-            <IconSymbol name="heart.fill" size={22} color="#ffffff" />
-          </View>
-          <ThemedText lightColor="#E6F0FF" darkColor="#E6F0FF" style={styles.cardLabel}>
-            Heart Rate
-          </ThemedText>
-          <ThemedText lightColor="#ffffff" darkColor="#ffffff" style={styles.cardValue}>
-            72 BPM
-          </ThemedText>
-          <ThemedText lightColor="#D6E6FF" darkColor="#D6E6FF" style={styles.cardSub}>
-            Resting
-          </ThemedText>
+    <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
+      <ParallaxScrollView
+        headerBackgroundColor={{ light: '#8EC5FF', dark: '#123A6F' }}
+        headerImage={
+          <Image
+            source={require('@/assets/images/relaxhome.jpg')}
+            style={styles.reactLogo}
+          />
+        }>
+        <ThemedView style={styles.titleContainer}>
+          <ThemedText type="title">Today</ThemedText>
+          <HelloWave />
         </ThemedView>
 
-        <ThemedView style={[styles.card, styles.stepsCard]}>
-          <View style={styles.iconBadge}>
-            <IconSymbol name="figure.walk" size={22} color="#ffffff" />
-          </View>
-          <ThemedText lightColor="#E6F0FF" darkColor="#E6F0FF" style={styles.cardLabel}>
-            Steps
-          </ThemedText>
-          <ThemedText lightColor="#ffffff" darkColor="#ffffff" style={styles.cardValue}>
-            6,842
-          </ThemedText>
-          <ThemedText lightColor="#D6E6FF" darkColor="#D6E6FF" style={styles.cardSub}>
-            of 10,000
-          </ThemedText>
+        <ThemedText type="subtitle" style={styles.subtitle}>
+          Health Overview
+        </ThemedText>
+
+        <View style={styles.cardRow}>
+          <ThemedView style={[styles.card, styles.heartCard]}>
+            <View style={styles.iconBadge}>
+              <IconSymbol name="heart.fill" size={22} color="#ffffff" />
+            </View>
+            <ThemedText lightColor="#E6F0FF" darkColor="#E6F0FF" style={styles.cardLabel}>
+              Heart Rate
+            </ThemedText>
+            <ThemedText lightColor="#ffffff" darkColor="#ffffff" style={styles.cardValue}>
+              72 BPM
+            </ThemedText>
+            <ThemedText lightColor="#D6E6FF" darkColor="#D6E6FF" style={styles.cardSub}>
+              Resting
+            </ThemedText>
+          </ThemedView>
+
+          <ThemedView style={[styles.card, styles.stepsCard]}>
+            <View style={styles.iconBadge}>
+              <IconSymbol name="figure.walk" size={22} color="#ffffff" />
+            </View>
+            <ThemedText lightColor="#E6F0FF" darkColor="#E6F0FF" style={styles.cardLabel}>
+              Steps
+            </ThemedText>
+            <ThemedText lightColor="#ffffff" darkColor="#ffffff" style={styles.cardValue}>
+              6,842
+            </ThemedText>
+            <ThemedText lightColor="#D6E6FF" darkColor="#D6E6FF" style={styles.cardSub}>
+              of 10,000
+            </ThemedText>
+          </ThemedView>
+        </View>
+
+        <View style={styles.controlsRow}>
+          <Pressable style={({ pressed }) => [styles.controlButton, pressed && styles.controlButtonPressed]}>
+            <ThemedText lightColor={Colors.light.text} darkColor={Colors.dark.text} style={styles.controlLabel}>
+              Start
+            </ThemedText>
+          </Pressable>
+          <Pressable style={({ pressed }) => [styles.controlButton, pressed && styles.controlButtonPressed]}>
+            <ThemedText lightColor={Colors.light.text} darkColor={Colors.dark.text} style={styles.controlLabel}>
+              Pause
+            </ThemedText>
+          </Pressable>
+          <Pressable style={({ pressed }) => [styles.controlButton, pressed && styles.controlButtonPressed]}>
+            <ThemedText lightColor={Colors.light.text} darkColor={Colors.dark.text} style={styles.controlLabel}>
+              Reset
+            </ThemedText>
+          </Pressable>
+        </View>
+
+        <ThemedView style={styles.placeholderCard}>
+          <ThemedText type="defaultSemiBold">Insights</ThemedText>
+          <ThemedText style={{ opacity: 0.7 }}>Weekly charts and trends coming soon.</ThemedText>
         </ThemedView>
-      </View>
-
-      <View style={styles.controlsRow}>
-        <Pressable style={({ pressed }) => [styles.controlButton, pressed && styles.controlButtonPressed]}>
-          <ThemedText lightColor={Colors.light.text} darkColor={Colors.dark.text} style={styles.controlLabel}>
-            Start
-          </ThemedText>
-        </Pressable>
-        <Pressable style={({ pressed }) => [styles.controlButton, pressed && styles.controlButtonPressed]}>
-          <ThemedText lightColor={Colors.light.text} darkColor={Colors.dark.text} style={styles.controlLabel}>
-            Pause
-          </ThemedText>
-        </Pressable>
-        <Pressable style={({ pressed }) => [styles.controlButton, pressed && styles.controlButtonPressed]}>
-          <ThemedText lightColor={Colors.light.text} darkColor={Colors.dark.text} style={styles.controlLabel}>
-            Reset
-          </ThemedText>
-        </Pressable>
-      </View>
-
-      <ThemedView style={styles.placeholderCard}>
-        <ThemedText type="defaultSemiBold">Insights</ThemedText>
-        <ThemedText style={{ opacity: 0.7 }}>Weekly charts and trends coming soon.</ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </ParallaxScrollView>
+    </SafeAreaView>
   );
 }
 
