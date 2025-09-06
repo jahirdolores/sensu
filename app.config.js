@@ -51,6 +51,8 @@ export default {
     extra: {
       API_KEY_GMAPS: process.env.API_KEY_GMAPS,
       WATCH_LOCATION_API: process.env.WATCH_LOCATION_API,
+      WATCH_SERVER_URL: process.env.WATCH_SERVER_URL || 'http://192.168.1.65:8000',
+      WATCH_IMEI_CODE: process.env.WATCH_IMEI_CODE || '861265062812547',
     }
   }
 };

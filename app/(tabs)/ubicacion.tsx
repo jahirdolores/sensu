@@ -1,72 +1,34 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { API_CONFIG, DEFAULT_HEADERS } from '@/config/api';
-import React, { useEffect, useState } from 'react';
-import { Alert, Platform, StyleSheet, View } from 'react-native';
+import { API_CONFIG } from '@/config/api';
+import { useWatchLocation } from '@/hooks/useWatchLocation';
+import React from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const isIos = Platform.OS === 'ios';
 
-interface WatchLocation {
-  latitude: number;
-  longitude: number;
-  timestamp: string;
-}
-
 export default function UbicacionScreen() {
-  const [watchLocation, setWatchLocation] = useState<WatchLocation | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  // Función para obtener las coordenadas del reloj desde la API
-  const fetchWatchLocation = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(API_CONFIG.WATCH_LOCATION_API, {
-        method: 'GET',
-        headers: DEFAULT_HEADERS,
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al obtener la ubicación del reloj');
-      }
-
-      const data = await response.json();
-      setWatchLocation({
-        latitude: 19.184843,  //data.latitude,
-        longitude: -99.586585, //data.longitude,
-        timestamp: new Date().toISOString(), //data.timestamp,
-      });
-    } catch (error) {
-      console.error('Error fetching watch location:', error);
-      Alert.alert('Error', 'No se pudo obtener la ubicación del reloj');
-      // Ubicación por defecto
-      setWatchLocation({
-        latitude: 19.184843, //API_CONFIG.DEFAULT_LOCATION.latitude,
-        longitude: -99.586585, //API_CONFIG.DEFAULT_LOCATION.longitude,
-        timestamp: new Date().toISOString(),
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchWatchLocation();
-    
-    // Actualizar la ubicación según el intervalo configurado
-    const interval = setInterval(fetchWatchLocation, API_CONFIG.UPDATE_INTERVAL);
-    
-    return () => clearInterval(interval);
-  }, []);
+  const { location: watchLocation, loading, error, refresh, isConnected } = useWatchLocation();
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+    <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
       <ThemedView style={styles.container}>
         <View style={styles.header}>
           <IconSymbol name="location.fill" size={32} color="#4ECDC4" />
           <ThemedText type="title" style={styles.title}>Ubicación del Reloj</ThemedText>
+          <View style={styles.statusIndicator}>
+            <IconSymbol 
+              name={isConnected ? "checkmark.circle.fill" : "exclamationmark.triangle.fill"} 
+              size={16} 
+              color={isConnected ? "#4ECDC4" : "#FF6B6B"} 
+            />
+            <ThemedText style={[styles.statusText, { color: isConnected ? "#4ECDC4" : "#FF6B6B" }]}>
+              {isConnected ? "Conectado" : "Desconectado"}
+            </ThemedText>
+          </View>
         </View>
         
         <View style={styles.mapContainer}>
@@ -110,10 +72,24 @@ export default function UbicacionScreen() {
           <ThemedText type="subtitle" style={styles.subtitle}>
             Estado del Reloj
           </ThemedText>
+          
+          {error && (
+            <View style={styles.errorContainer}>
+              <ThemedText style={styles.errorText}>
+                ⚠️ {error}
+              </ThemedText>
+            </View>
+          )}
+          
           {watchLocation ? (
             <ThemedText style={styles.infoText}>
               📍 Ubicación: {watchLocation.latitude.toFixed(6)}, {watchLocation.longitude.toFixed(6)}
               {'\n'}🕐 Última actualización: {new Date(watchLocation.timestamp).toLocaleString()}
+              {'\n'}🔋 Batería: {watchLocation.battery}%
+              {'\n'}🛰️ Satélites: {watchLocation.satellites}
+              {'\n'}📶 Señal GSM: {watchLocation.gsm_signal}%
+              {'\n'}🚗 Velocidad: {watchLocation.speed_kmh.toFixed(2)} km/h
+              {'\n'}🧭 Dirección: {watchLocation.direction_deg.toFixed(1)}°
             </ThemedText>
           ) : (
             <ThemedText style={styles.infoText}>
@@ -133,13 +109,23 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    justifyContent: 'space-between',
     padding: 20,
     paddingBottom: 10,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    flex: 1,
+  },
+  statusIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
   mapContainer: {
     flex: 1,
@@ -171,5 +157,18 @@ const styles = StyleSheet.create({
   infoText: {
     opacity: 0.8,
     lineHeight: 20,
+  },
+  errorContainer: {
+    backgroundColor: 'rgba(255,107,107,0.1)',
+    borderColor: 'rgba(255,107,107,0.3)',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+  },
+  errorText: {
+    color: '#FF6B6B',
+    fontSize: 14,
+    fontWeight: '500',
   },
 }); 

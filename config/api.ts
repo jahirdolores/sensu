@@ -5,8 +5,16 @@ export const API_CONFIG = {
   // API key de Google Maps desde variables de entorno
   GOOGLE_MAPS_API_KEY: Constants.expoConfig?.extra?.API_KEY_GMAPS || 'TU_API_KEY_DE_GOOGLE_MAPS_AQUI',
   
-  // Endpoint para obtener la ubicación del reloj desde variables de entorno
-  WATCH_LOCATION_API: Constants.expoConfig?.extra?.WATCH_LOCATION_API || 'https://tu-api.com/watch-location',
+  // Servidor del reloj desde variables de entorno
+  WATCH_SERVER_URL: Constants.expoConfig?.extra?.WATCH_SERVER_URL || 'http://192.168.1.65:8000',
+  
+  // Código IMEI del reloj desde variables de entorno
+  WATCH_IMEI_CODE: Constants.expoConfig?.extra?.WATCH_IMEI_CODE || '861265062812547',
+  
+  // Endpoint para obtener la ubicación del reloj
+  get WATCH_LOCATION_API() {
+    return `${this.WATCH_SERVER_URL}/api/watches/${this.WATCH_IMEI_CODE}/location`;
+  },
   
   // Intervalo de actualización en milisegundos (30 segundos)
   UPDATE_INTERVAL: 30000,
