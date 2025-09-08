@@ -1,32 +1,45 @@
-import { SymbolView, SymbolViewProps, SymbolWeight } from 'expo-symbols';
-import { StyleProp, ViewStyle } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { SymbolWeight } from 'expo-symbols';
+import { ComponentProps } from 'react';
+import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
+
+type IconMapping = Record<string, ComponentProps<typeof Ionicons>['name']>;
+type IconSymbolName = keyof typeof MAPPING;
+
+/**
+ * SF Symbols to Ionicons mappings for consistent cross-platform icons.
+ */
+const MAPPING = {
+  'house.fill': 'home',
+  'paperplane.fill': 'send',
+  'chevron.left.forwardslash.chevron.right': 'code-slash',
+  'chevron.right': 'chevron-forward',
+  'heart.fill': 'heart',
+  'figure.walk': 'walk',
+  'square.and.arrow.up': 'share',
+  'drop.fill': 'water',
+  'thermometer': 'thermometer',
+  'checkmark.shield.fill': 'shield-checkmark',
+  'waveform': 'pulse',
+  'phone.fill': 'call',
+  'square.stack.3d.up.fill': 'layers',
+  'exit-outline': 'exit-outline',
+  'bell.fill': 'notifications',
+  'location.fill': 'location',
+  'person.fill': 'person',
+} as IconMapping;
 
 export function IconSymbol({
   name,
   size = 24,
   color,
   style,
-  weight = 'regular',
 }: {
-  name: SymbolViewProps['name'];
+  name: IconSymbolName;
   size?: number;
-  color: string;
-  style?: StyleProp<ViewStyle>;
+  color: string | OpaqueColorValue;
+  style?: StyleProp<TextStyle>;
   weight?: SymbolWeight;
 }) {
-  return (
-    <SymbolView
-      weight={weight}
-      tintColor={color}
-      resizeMode="scaleAspectFit"
-      name={name}
-      style={[
-        {
-          width: size,
-          height: size,
-        },
-        style,
-      ]}
-    />
-  );
+  return <Ionicons color={color} size={size} name={MAPPING[name]} style={style} />;
 }
