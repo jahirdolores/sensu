@@ -1,40 +1,60 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { Tabs } from 'expo-router';
+import React from 'react';
+import { Platform, StatusBar, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
+  const tint = Colors[colorScheme ?? 'light'].tint;
+  const isIOS = Platform.OS === 'ios';
 
   return (
-    <SafeAreaView 
-      style={{ 
-        flex: 1,
-        paddingTop: Platform.OS === 'ios' ? insets.top : 0
-      }} 
-      edges={[]}
-    >
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+
       <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-          headerShown: false,
-          tabBarButton: HapticTab,
-          tabBarBackground: TabBarBackground,
-          tabBarStyle: Platform.select({
-            ios: {
-              // Use a transparent background on iOS to show the blur effect
-              position: 'absolute',
-            },
-            default: {},
-          }),
-        }}>
+      screenOptions={{
+    headerShown: false,
+    tabBarHideOnKeyboard: true,
+    tabBarActiveTintColor: tint,
+    tabBarButton: HapticTab,
+
+    tabBarStyle: Platform.OS === 'ios'
+    ? {
+        // ¡sin absolute!
+        backgroundColor: 'transparent',
+        borderTopWidth: 0,
+        paddingTop: 10,
+        paddingBottom: insets.bottom,
+      }
+    : {
+        // Android sigue flotante
+        position: 'absolute',
+        left: 16, right: 16, bottom: 16,
+        height: 64,
+        paddingTop: 10,
+        paddingBottom: 10,
+        borderRadius: 24,
+        borderTopWidth: 0,
+        backgroundColor: 'transparent',
+        elevation: 0,
+      },
+
+    tabBarBackground: () =>
+      isIOS ? (
+        <TabBarBackground />
+      ) : (
+        <View style={{ flex: 1, borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.95)' }} />
+      ),
+  }}
+>
+
         <Tabs.Screen
           name="index"
           options={{
@@ -64,6 +84,6 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-    </SafeAreaView>
+    </View>
   );
 }

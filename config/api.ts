@@ -17,9 +17,8 @@ export const API_CONFIG = {
   },
   
   // Intervalo de actualización en milisegundos (30 segundos)
-  UPDATE_INTERVAL: 30000,
+  UPDATE_INTERVAL: 10000,
   
-  // Ubicación por defecto (Ciudad de México)
   DEFAULT_LOCATION: {
     latitude: 19.4326,
     longitude: -99.1332,

@@ -14,7 +14,9 @@ export default {
       supportsTablet: true,
       config: {
         googleMapsApiKey: process.env.API_KEY_GMAPS,
-      }
+      },
+      statusBarStyle: "dark-content",
+      statusBarBackgroundColor: "transparent",
     },
     android: {
       adaptiveIcon: {

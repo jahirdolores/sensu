@@ -1,0 +1,370 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "GPS Watch API",
+        "description": "API to interact with GPS watches over TCP, keyed by IMEI. Provides status, metrics, location, and command delivery.",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/health": {
+            "get": {
+                "tags": [
+                    "system"
+                ],
+                "summary": "API health check",
+                "operationId": "api_health_api_health_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/watches": {
+            "get": {
+                "tags": [
+                    "watches"
+                ],
+                "summary": "List watch sessions and known devices",
+                "operationId": "api_list_watches_api_watches_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/watches/{imei}": {
+            "get": {
+                "tags": [
+                    "watches"
+                ],
+                "summary": "Get watch status and last-known data",
+                "operationId": "api_get_watch_api_watches__imei__get",
+                "parameters": [
+                    {
+                        "name": "imei",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Imei"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/watches/{imei}/metrics": {
+            "get": {
+                "tags": [
+                    "watches"
+                ],
+                "summary": "Get last-known health metrics",
+                "operationId": "api_get_metrics_api_watches__imei__metrics_get",
+                "parameters": [
+                    {
+                        "name": "imei",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Imei"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/watches/{imei}/location": {
+            "get": {
+                "tags": [
+                    "watches"
+                ],
+                "summary": "Get last-known location (parsed)",
+                "operationId": "api_get_location_api_watches__imei__location_get",
+                "parameters": [
+                    {
+                        "name": "imei",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Imei"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/watches/{imei}/command": {
+            "post": {
+                "tags": [
+                    "commands"
+                ],
+                "summary": "Send structured command to a watch",
+                "operationId": "api_send_command_api_watches__imei__command_post",
+                "parameters": [
+                    {
+                        "name": "imei",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Imei"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendCommandRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/watches/{imei}/raw": {
+            "post": {
+                "tags": [
+                    "commands"
+                ],
+                "summary": "Send raw payload to a watch",
+                "operationId": "api_send_raw_api_watches__imei__raw_post",
+                "parameters": [
+                    {
+                        "name": "imei",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Imei"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RawCommandRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "RawCommandRequest": {
+                "properties": {
+                    "payload": {
+                        "type": "string",
+                        "title": "Payload"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "payload"
+                ],
+                "title": "RawCommandRequest"
+            },
+            "SendCommandRequest": {
+                "properties": {
+                    "command": {
+                        "type": "string",
+                        "title": "Command"
+                    },
+                    "params": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Params",
+                        "default": ""
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "command"
+                ],
+                "title": "SendCommandRequest"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "system",
+            "description": "Health checks and API schema."
+        },
+        {
+            "name": "watches",
+            "description": "Watch sessions, status, metrics, and location."
+        },
+        {
+            "name": "commands",
+            "description": "Send commands to watches."
+        }
+    ]
+}

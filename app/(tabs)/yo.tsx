@@ -3,7 +3,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useProfile } from '@/hooks/useProfile';
 import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function YoScreen() {
   const { 
@@ -28,7 +28,7 @@ export default function YoScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
+    <SafeAreaProvider style={{ flex: 1 }}>
       <ThemedView style={styles.container}>
         <View style={styles.header}>
           <IconSymbol name="person.fill" size={32} color="#9B59B6" />
@@ -204,7 +204,7 @@ export default function YoScreen() {
           </ScrollView>
         )}
       </ThemedView>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

@@ -1,4 +1,5 @@
 // Exportar todos los hooks personalizados
+export { useHeartData } from './monitoring/heart';
 export { useAlerts } from './useAlerts';
 export { useHealthData } from './useHealthData';
 export { useProfile } from './useProfile';

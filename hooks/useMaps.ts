@@ -11,6 +11,7 @@ interface UseMapsReturn {
   currentRegion: Region | undefined;
   isLoading: boolean;
   error: string | null;
+  isConnected: boolean;
   refreshLocation: () => Promise<void>;
 }
 
@@ -19,7 +20,7 @@ interface UseMapsReturn {
  * Combina la ubicación del reloj con la configuración del mapa
  */
 export function useMaps(): UseMapsReturn {
-  const { location: watchLocation, loading, error, refresh } = useWatchLocation();
+  const { location: watchLocation, loading, error, refresh, isConnected } = useWatchLocation();
   const [currentRegion, setCurrentRegion] = useState<Region | undefined>(undefined);
 
   // Configuración del proveedor del mapa
@@ -59,6 +60,7 @@ export function useMaps(): UseMapsReturn {
     currentRegion,
     isLoading: loading,
     error,
+    isConnected,
     refreshLocation,
   };
 }

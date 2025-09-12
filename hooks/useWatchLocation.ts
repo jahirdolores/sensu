@@ -31,7 +31,22 @@ export function useWatchLocation(params?: Partial<WatchLocationParams>): UseWatc
       setIsConnected(serverHealthy);
       
       if (!serverHealthy) {
-        throw new Error('Servidor del reloj no disponible');
+        console.warn('Servidor del reloj no disponible, usando ubicación por defecto');
+        // No lanzar error, usar ubicación por defecto
+        const defaultLocation: WatchLocation = {
+          latitude: API_CONFIG.DEFAULT_LOCATION.latitude,
+          longitude: API_CONFIG.DEFAULT_LOCATION.longitude,
+          timestamp: new Date().toISOString(),
+          battery: 0,
+          satellites: 0,
+          gsm_signal: 0,
+          speed_kmh: 0,
+          direction_deg: 0,
+        };
+        setLocation(defaultLocation);
+        setIsConnected(false);
+        setError('Servidor del reloj no disponible. Mostrando ubicación por defecto.');
+        return;
       }
       
       // Obtener la ubicación del reloj
@@ -74,7 +89,14 @@ export function useWatchLocation(params?: Partial<WatchLocationParams>): UseWatc
       };
       setLocation(defaultLocation);
       
-      console.error('Error en useWatchLocation:', errorMessage);
+      // Mostrar mensaje más específico según el tipo de error
+      if (errorMessage.includes('Sin señal GPS')) {
+        console.warn('El reloj no tiene señal GPS - ubicación no disponible');
+      } else if (errorMessage.includes('Network request failed')) {
+        console.warn('Error de red - verificar conectividad');
+      } else {
+        console.error('Error en useWatchLocation:', errorMessage);
+      }
     } finally {
       setLoading(false);
     }

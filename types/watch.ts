@@ -53,3 +53,24 @@ export interface WatchLocationParams {
   imeiCode: string;
   serverUrl: string;
 }
+
+// Tipos para comandos del reloj
+export interface SendCommandRequest {
+  command: string;
+  params?: string | null;
+}
+
+export interface RawCommandRequest {
+  payload: string;
+}
+
+export interface CommandResponse {
+  success: boolean;
+  message?: string;
+  data?: any;
+}
+
+export interface CommandParams {
+  imeiCode?: string;
+  serverUrl?: string;
+}
