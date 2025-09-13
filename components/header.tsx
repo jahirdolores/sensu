@@ -49,8 +49,8 @@ export default function Header() {
     <View style={[
       styles.header, 
       { 
-        paddingTop: Platform.OS === 'ios' ? 8 : 16,
-        paddingBottom: Platform.OS === 'ios' ? 12 : 16,
+        paddingTop: insets.top + (Platform.OS === 'ios' ? -40 : 0),
+        paddingBottom: Platform.OS === 'ios' ? 10 : 16,
         backgroundColor: '#ffffff',
       }
     ]}>
