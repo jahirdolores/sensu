@@ -1,6 +1,5 @@
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Tabs } from 'expo-router';
@@ -19,42 +18,49 @@ export default function TabLayout() {
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
       <Tabs
-      screenOptions={{
-    headerShown: false,
-    tabBarHideOnKeyboard: true,
-    tabBarActiveTintColor: tint,
-    tabBarButton: HapticTab,
+        screenOptions={{
+          headerShown: false,
+          tabBarHideOnKeyboard: true,
+          tabBarActiveTintColor: tint,
+          tabBarButton: HapticTab,
 
-    tabBarStyle: Platform.OS === 'ios'
-    ? {
-        // ¡sin absolute!
-        backgroundColor: 'transparent',
-        borderTopWidth: 0,
-        paddingTop: 10,
-        paddingBottom: insets.bottom,
-      }
-    : {
-        // Android sigue flotante
-        position: 'absolute',
-        left: 16, right: 16, bottom: 16,
-        height: 64,
-        paddingTop: 10,
-        paddingBottom: 10,
-        borderRadius: 24,
-        borderTopWidth: 0,
-        backgroundColor: 'transparent',
-        elevation: 0,
-      },
+          tabBarStyle: isIOS
+            ? {
+                // iOS: NO absoluto; empuja el contenido
+                backgroundColor: '#808080',
+                borderTopWidth: 0.5,
+                borderTopColor: '#666666',
+                paddingTop: 5,
+                paddingBottom: insets.bottom + 5,
+                height: 30 + insets.bottom,
+              }
+            : {
+                // Android: flotante
+                position: 'absolute',
+                left: 16,
+                right: 16,
+                bottom: 0,
+                height: 30,
+                paddingTop: 5,
+                paddingBottom: 5,
+                borderRadius: 0,
+                borderTopWidth: 0.5,
+                borderTopColor: '#666666',
+                backgroundColor: '#808080',
+                elevation: 8,
+              },
 
-    tabBarBackground: () =>
-      isIOS ? (
-        <TabBarBackground />
-      ) : (
-        <View style={{ flex: 1, borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.95)' }} />
-      ),
-  }}
->
-
+          tabBarBackground: () => (
+              <View
+                style={{
+                  flex: 1,
+                  borderRadius: 0,
+                  backgroundColor: '#808080',
+                }}
+              />
+            ),
+        }}
+      >
         <Tabs.Screen
           name="index"
           options={{

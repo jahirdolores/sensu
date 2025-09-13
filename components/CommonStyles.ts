@@ -17,6 +17,9 @@ export const CommonStyles = StyleSheet.create({
   scrollView: {
     flex: 1,
     width: '100%',
+    height: 400,
+    borderWidth: 1,
+    borderColor: 'red',
   },
   
   // Header de sección (título con icono)

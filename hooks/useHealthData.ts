@@ -1,3 +1,4 @@
+import { WatchService } from '@/services/watchService';
 import { useCallback, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
@@ -58,43 +59,80 @@ export function useHealthData(): UseHealthDataReturn {
       setLoading(true);
       setError(null);
       
-      // Simular llamada a API de salud
-      // En una implementación real, esto sería una llamada HTTP
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Obtener métricas reales del reloj
+      const watchMetrics = await WatchService.getWatchMetrics();
       
-      const mockHealthData: HealthData = {
-        heartRate: 72,
-        steps: 6842,
-        calories: 320,
-        sleepHours: 7.5,
-        lastUpdate: new Date().toISOString(),
-      };
-      
-      const mockHealthMetrics: HealthMetrics = {
-        heartRate: {
-          current: 72,
-          resting: 65,
-          max: 190,
-          zone: 'rest',
-        },
-        activity: {
+      if (watchMetrics) {
+        // Usar datos reales del reloj
+        const realHealthData: HealthData = {
+          heartRate: watchMetrics.heartRate?.current || 0,
+          steps: watchMetrics.activity?.steps || 0,
+          calories: watchMetrics.activity?.calories || 0,
+          sleepHours: 7.5, // No disponible en el reloj, mantener valor por defecto
+          lastUpdate: watchMetrics.lastUpdate,
+        };
+        
+        const realHealthMetrics: HealthMetrics = {
+          heartRate: {
+            current: watchMetrics.heartRate?.current || 0,
+            resting: watchMetrics.heartRate?.resting || 0,
+            max: watchMetrics.heartRate?.max || 0,
+            zone: watchMetrics.heartRate?.zone || 'rest',
+          },
+          activity: {
+            steps: watchMetrics.activity?.steps || 0,
+            stepsGoal: 10000, // Meta por defecto
+            calories: watchMetrics.activity?.calories || 0,
+            caloriesGoal: 500, // Meta por defecto
+            distance: watchMetrics.activity?.distance || 0,
+          },
+          sleep: {
+            hours: 7.5, // No disponible en el reloj
+            quality: 'good',
+            deepSleep: 2.1,
+            lightSleep: 4.2,
+            remSleep: 1.2,
+          },
+        };
+        
+        setHealthData(realHealthData);
+        setHealthMetrics(realHealthMetrics);
+      } else {
+        // Fallback a datos simulados si no hay conexión
+        const mockHealthData: HealthData = {
+          heartRate: 72,
           steps: 6842,
-          stepsGoal: 10000,
           calories: 320,
-          caloriesGoal: 500,
-          distance: 5.2,
-        },
-        sleep: {
-          hours: 7.5,
-          quality: 'good',
-          deepSleep: 2.1,
-          lightSleep: 4.2,
-          remSleep: 1.2,
-        },
-      };
-      
-      setHealthData(mockHealthData);
-      setHealthMetrics(mockHealthMetrics);
+          sleepHours: 7.5,
+          lastUpdate: new Date().toISOString(),
+        };
+        
+        const mockHealthMetrics: HealthMetrics = {
+          heartRate: {
+            current: 72,
+            resting: 65,
+            max: 190,
+            zone: 'rest',
+          },
+          activity: {
+            steps: 6842,
+            stepsGoal: 10000,
+            calories: 320,
+            caloriesGoal: 500,
+            distance: 5.2,
+          },
+          sleep: {
+            hours: 7.5,
+            quality: 'good',
+            deepSleep: 2.1,
+            lightSleep: 4.2,
+            remSleep: 1.2,
+          },
+        };
+        
+        setHealthData(mockHealthData);
+        setHealthMetrics(mockHealthMetrics);
+      }
       
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al obtener datos de salud';

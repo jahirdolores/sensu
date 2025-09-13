@@ -74,3 +74,96 @@ export interface CommandParams {
   imeiCode?: string;
   serverUrl?: string;
 }
+
+// Tipos para métricas de salud del reloj
+export interface WatchMetrics {
+  heartRate?: {
+    current: number;
+    resting: number;
+    max: number;
+    zone: 'rest' | 'fat_burn' | 'cardio' | 'peak';
+    timestamp: string;
+  };
+  oxygen?: {
+    saturation: number;
+    timestamp: string;
+  };
+  temperature?: {
+    body: number;
+    ambient: number;
+    timestamp: string;
+  };
+  activity?: {
+    steps: number;
+    calories: number;
+    distance: number;
+    timestamp: string;
+  };
+  battery: {
+    level: number;
+    charging: boolean;
+    timestamp: string;
+  };
+  lastUpdate: string;
+}
+
+// Tipos para eventos de caída
+export interface FallEvent {
+  id: string;
+  imei: string;
+  timestamp: string;
+  latitude: number;
+  longitude: number;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  status: 'detected' | 'confirmed' | 'false_alarm' | 'resolved';
+  battery: number;
+  gsm_signal: number;
+  satellites: number;
+}
+
+// Tipos para alertas del reloj
+export interface WatchAlarm {
+  id: string;
+  imei: string;
+  type: 'sos' | 'fall' | 'low_battery' | 'no_signal' | 'geofence' | 'heart_rate' | 'temperature';
+  status: 'active' | 'inactive' | 'acknowledged' | 'resolved';
+  timestamp: string;
+  message: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+}
+
+// Tipos para estado del reloj
+export interface WatchStatus {
+  imei: string;
+  online: boolean;
+  lastSeen: string;
+  battery: number;
+  gsm_signal: number;
+  satellites: number;
+  working_mode: number;
+  fortification_state: number;
+  location?: {
+    latitude: number;
+    longitude: number;
+    timestamp: string;
+  };
+}
+
+// Tipos para estadísticas de eventos
+export interface FallEventStats {
+  total: number;
+  today: number;
+  thisWeek: number;
+  thisMonth: number;
+  bySeverity: {
+    low: number;
+    medium: number;
+    high: number;
+    critical: number;
+  };
+  lastEvent?: string;
+}

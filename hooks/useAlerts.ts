@@ -1,3 +1,4 @@
+import { WatchService } from '@/services/watchService';
 import { useCallback, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
@@ -69,56 +70,54 @@ export function useAlerts(): UseAlertsReturn {
       setLoading(true);
       setError(null);
       
-      // Simular llamada a API de alertas
-      // En una implementación real, esto sería una llamada HTTP
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Obtener alertas reales del reloj
+      const watchAlarms = await WatchService.getWatchAlarmEvents();
       
-      const mockAlerts: AlertItem[] = [
-        {
-          id: '1',
-          type: 'medication',
-          title: 'Recordatorio de Medicamento',
-          message: 'Es hora de tomar tu medicamento para la presión arterial',
-          priority: 'high',
-          isRead: false,
-          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 horas atrás
-          scheduledFor: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // En 30 minutos
-          isActive: true,
-        },
-        {
-          id: '2',
-          type: 'appointment',
-          title: 'Cita Médica Próxima',
-          message: 'Tienes una cita con el cardiólogo mañana a las 10:00 AM',
-          priority: 'medium',
-          isRead: false,
-          createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 día atrás
-          scheduledFor: new Date(Date.now() + 18 * 60 * 60 * 1000).toISOString(), // En 18 horas
-          isActive: true,
-        },
-        {
-          id: '3',
-          type: 'activity',
-          title: 'Meta de Actividad',
-          message: 'Has alcanzado tu meta diaria de pasos. ¡Excelente trabajo!',
-          priority: 'low',
-          isRead: true,
-          createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 horas atrás
-          isActive: false,
-        },
-        {
-          id: '4',
-          type: 'emergency',
-          title: 'Alerta de Emergencia',
-          message: 'Se ha detectado una frecuencia cardíaca irregular. Contacta a tu médico.',
-          priority: 'critical',
-          isRead: false,
-          createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutos atrás
-          isActive: true,
-        },
-      ];
+      // Convertir alertas del reloj a nuestro formato
+      const realAlerts: AlertItem[] = watchAlarms.map((alarm, index) => ({
+        id: alarm.id,
+        type: alarm.type === 'sos' || alarm.type === 'fall' ? 'emergency' : 
+              alarm.type === 'heart_rate' || alarm.type === 'temperature' ? 'general' : 'general',
+        title: getAlarmTitle(alarm.type),
+        message: alarm.message,
+        priority: alarm.priority,
+        isRead: alarm.status === 'acknowledged' || alarm.status === 'resolved',
+        createdAt: alarm.timestamp,
+        scheduledFor: undefined,
+        isActive: alarm.status === 'active',
+      }));
       
-      setAlerts(mockAlerts);
+      // Agregar alertas simuladas adicionales si no hay alertas del reloj
+      if (realAlerts.length === 0) {
+        const mockAlerts: AlertItem[] = [
+          {
+            id: 'mock-1',
+            type: 'medication',
+            title: 'Recordatorio de Medicamento',
+            message: 'Es hora de tomar tu medicamento para la presión arterial',
+            priority: 'high',
+            isRead: false,
+            createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+            scheduledFor: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+            isActive: true,
+          },
+          {
+            id: 'mock-2',
+            type: 'appointment',
+            title: 'Cita Médica Próxima',
+            message: 'Tienes una cita con el cardiólogo mañana a las 10:00 AM',
+            priority: 'medium',
+            isRead: false,
+            createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+            scheduledFor: new Date(Date.now() + 18 * 60 * 60 * 1000).toISOString(),
+            isActive: true,
+          },
+        ];
+        
+        setAlerts([...realAlerts, ...mockAlerts]);
+      } else {
+        setAlerts(realAlerts);
+      }
       
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al obtener alertas';
@@ -128,6 +127,20 @@ export function useAlerts(): UseAlertsReturn {
       setLoading(false);
     }
   }, []);
+
+  // Función auxiliar para obtener títulos de alertas
+  const getAlarmTitle = (type: string): string => {
+    switch (type) {
+      case 'sos': return 'Alerta SOS';
+      case 'fall': return 'Detección de Caída';
+      case 'low_battery': return 'Batería Baja';
+      case 'no_signal': return 'Reloj No Detectado';
+      case 'geofence': return 'Alerta de Geocerca';
+      case 'heart_rate': return 'Alerta de Frecuencia Cardíaca';
+      case 'temperature': return 'Alerta de Temperatura';
+      default: return 'Alerta del Reloj';
+    }
+  };
 
   const refresh = useCallback(async () => {
     await fetchAlerts();
