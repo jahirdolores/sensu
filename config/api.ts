@@ -9,7 +9,7 @@ export const API_CONFIG = {
   WATCH_SERVER_URL: Constants.expoConfig?.extra?.WATCH_SERVER_URL || 'http://192.168.1.65:8000',
   
   // Código IMEI del reloj desde variables de entorno
-  WATCH_IMEI_CODE: Constants.expoConfig?.extra?.WATCH_IMEI_CODE || '861265062812547',
+  WATCH_IMEI_CODE: Constants.expoConfig?.extra?.WATCH_IMEI_CODE || ,
   
   // Endpoint para obtener la ubicación del reloj
   get WATCH_LOCATION_API() {
